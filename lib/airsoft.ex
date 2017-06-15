@@ -1,0 +1,2 @@
+defmodule Airsoft do
+end
