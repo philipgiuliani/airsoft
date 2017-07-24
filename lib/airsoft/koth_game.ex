@@ -1,4 +1,4 @@
-defmodule KOTHGame do
+defmodule Airsoft.KOTHGame do
   @default_time 10 * 60
   @default_teams [:red, :blue]
 
@@ -50,12 +50,12 @@ defmodule KOTHGame do
   end
 
   # Updates the times of the teams
-  defp update_times({:neutral, _}, teams), do: teams
-  defp update_times({team, last_event_time}, teams) do
+  defp update_times({:neutral, _event_time}, teams), do: teams
+  defp update_times({team, event_time}, teams) do
     now = :os.system_time(:second)
 
     Map.update!(teams, team, fn remaining_time ->
-      remaining_time - (now - last_event_time)
+      remaining_time - (now - event_time)
     end)
   end
 end
