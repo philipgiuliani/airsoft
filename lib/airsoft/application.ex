@@ -43,7 +43,7 @@ defmodule Airsoft.Application do
 
   def read_inputs(pid) do
     <<values_a>> = I2C.write_read(pid, <<@gpio_a>>, 1) # Bank A: Read
-    <<values_b>> = I2C.write_read(pid, <<@gpio_b>>, 1) # Bank B: Write
+    <<values_b>> = I2C.write_read(pid, <<@gpio_b>>, 1) # Bank B: Read
 
     #Logger.debug "Bank A: #{values_a}"
     #Logger.debug "Bank B: #{values_b}"
