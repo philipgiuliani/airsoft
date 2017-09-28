@@ -34,7 +34,7 @@ defmodule Airsoft.Capture.Game do
         Map.put(acc, point, :neutral)
       end),
       teams: Enum.reduce(@teams, %{}, fn team, acc ->
-        Map.put(acc, team, 0)
+        Map.put(acc, team, 0.0)
       end)
     }
   end
