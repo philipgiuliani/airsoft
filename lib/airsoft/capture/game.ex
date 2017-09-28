@@ -73,7 +73,7 @@ defmodule Airsoft.Capture.Game do
 
     if captured_points > 0 do
       seconds_per_point = game.time_per_point - ((captured_points - 1) * bonus_per_point)
-      current_score + Float.floor(passed_time / seconds_per_point)
+      current_score + (passed_time / seconds_per_point)
     else
       current_score
     end
