@@ -12,7 +12,7 @@ defmodule Airsoft.Capture.GameTest do
         |> Game.capture(:a, :red)
 
       point = Map.get(state.points, :a)
-      assert :red = point.team
+      assert point == :red
     end
 
     test "it neutralizes a point" do
@@ -23,7 +23,18 @@ defmodule Airsoft.Capture.GameTest do
         |> Game.capture(:a, :blue)
 
       point = Map.get(state.points, :a)
-      assert :neutral = point.team
+      assert point == :neutral
+    end
+
+    test "it remains when re-capturing an own point" do
+      state =
+        @game_options
+        |> Game.start()
+        |> Game.capture(:a, :red)
+        |> Game.capture(:a, :red)
+
+      point = Map.get(state.points, :a)
+      assert point == :red
     end
   end
 end

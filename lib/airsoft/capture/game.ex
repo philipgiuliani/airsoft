@@ -31,7 +31,7 @@ defmodule Airsoft.Capture.Game do
       time_per_point: time_per_point,
       time_max_speed: time_max_speed,
       points: Enum.reduce(points, %{}, fn point, acc ->
-        Map.put(acc, point, %Point{})
+        Map.put(acc, point, :neutral)
       end),
       teams: Enum.reduce(@teams, %{}, fn team, acc ->
         Map.put(acc, team, 0)
@@ -47,9 +47,10 @@ defmodule Airsoft.Capture.Game do
   def capture(game, point_id, team) do
     %State{game |
       points: Map.update!(game.points, point_id, fn point ->
-        case point.team do
-          :neutral -> %Point{point | team: team}
-          _ -> %Point{point | team: :neutral}
+        case point do
+          :neutral -> team
+          ^team -> team
+          other -> :neutral
         end
       end),
       teams: Map.new(game.teams, fn {id, _} ->
@@ -66,13 +67,13 @@ defmodule Airsoft.Capture.Game do
   def team_score(game, team) do
     bonus_per_point = (game.time_per_point - game.time_max_speed) / (game.time_per_point - 1)
 
-    captured_points = Enum.count(Map.values(game.points), fn point -> point.team == team end)
+    captured_points = Enum.count(Map.values(game.points), fn point -> point == team end)
     current_score = Map.get(game.teams, team)
     passed_time = :os.system_time(:second) - game.last_capture
 
     if captured_points > 0 do
       seconds_per_point = game.time_per_point - ((captured_points - 1) * bonus_per_point)
-      current_score + (passed_time / seconds_per_point)
+      current_score + Float.floor(passed_time / seconds_per_point)
     else
       current_score
     end
