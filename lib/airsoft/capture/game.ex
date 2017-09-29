@@ -6,12 +6,12 @@ defmodule Airsoft.Capture.Game do
   # Time in seconds, that the team will get a point when holing one single flag.
   @default_time_per_point 5
 
-  # Describes the time in which the team gains points when they have 100% of the points.
+  # Describes the time in which the team gains points when they have 100% of the flags.
   @default_time_max_speed 0.5
 
   defmodule State do
     defstruct [
-      points: %{},
+      flags: %{},
       teams: %{},
       time_per_point: @default_time_per_point,
       time_max_speed: @default_time_max_speed,
@@ -23,15 +23,15 @@ defmodule Airsoft.Capture.Game do
   Starts a new game
   """
   def start(opts \\ []) do
-    points = Keyword.get(opts, :points, [])
+    flags = Keyword.get(opts, :flags, [])
     time_per_point = Keyword.get(opts, :time_per_point, @default_time_per_point)
     time_max_speed = Keyword.get(opts, :time_max_speed, @default_time_max_speed)
 
     %State{
       time_per_point: time_per_point,
       time_max_speed: time_max_speed,
-      points: Enum.reduce(points, %{}, fn point, acc ->
-        Map.put(acc, point, :neutral)
+      flags: Enum.reduce(flags, %{}, fn flag, acc ->
+        Map.put(acc, flag, :neutral)
       end),
       teams: Enum.reduce(@teams, %{}, fn team, acc ->
         Map.put(acc, team, 0.0)
@@ -44,10 +44,10 @@ defmodule Airsoft.Capture.Game do
   If the point is already captured by another team, it will be neutralised first.
   It also updates the scores of all teams and resets the capture timer.
   """
-  def capture(game, point_id, team) do
+  def capture(game, flag, team) do
     %State{game |
-      points: Map.update!(game.points, point_id, fn point ->
-        case point do
+      flags: Map.update!(game.flags, flag, fn flag_team ->
+        case flag_team do
           :neutral -> team
           ^team -> team
           other -> :neutral
@@ -65,17 +65,17 @@ defmodule Airsoft.Capture.Game do
   """
   def team_score(%State{last_capture: last_capture}, _) when is_nil(last_capture), do: 0
   def team_score(game, team) do
-    bonus_per_point = (game.time_per_point - game.time_max_speed) / (game.time_per_point - 1)
+    bonus_per_flag = (game.time_per_point - game.time_max_speed) / (map_size(game.flags) - 1)
 
-    captured_points = Enum.count(Map.values(game.points), fn point -> point == team end)
-    current_score = Map.get(game.teams, team)
+    captured_flags = Enum.count(game.flags, fn {_, flag_team} -> flag_team == team end)
     passed_time = :os.system_time(:second) - game.last_capture
+    current_points = Map.get(game.teams, team)
 
-    if captured_points > 0 do
-      seconds_per_point = game.time_per_point - ((captured_points - 1) * bonus_per_point)
-      current_score + (passed_time / seconds_per_point)
+    if captured_flags > 0 do
+      seconds_per_point = game.time_per_point - ((captured_flags - 1) * bonus_per_flag)
+      current_points + (passed_time / seconds_per_point)
     else
-      current_score
+      current_points
     end
   end
 end
