@@ -18,46 +18,47 @@ defmodule Airsoft.Application do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(Airsoft.KOTHServer, [])
+      worker(Airsoft.UART, [])
+      # worker(Airsoft.KOTHServer, [])
     ]
 
     opts = [strategy: :one_for_one, name: Airsoft.Supervisor]
     Supervisor.start_link(children, opts)
 
     # IC2 configuration
-    {:ok, pid} = I2C.start_link("i2c-1", 0x20)
-    I2C.write(pid, <<@iodir_a, 0xff>>) # Bank A: Set all to inputs
-    I2C.write(pid, <<@gppu_a, 0xff>>) # Bank A: Enable pull up resistors
+    # {:ok, pid} = I2C.start_link("i2c-1", 0x20)
+    # I2C.write(pid, <<@iodir_a, 0xff>>) # Bank A: Set all to inputs
+    # I2C.write(pid, <<@gppu_a, 0xff>>) # Bank A: Enable pull up resistors
 
-    I2C.write(pid, <<@iodir_b, 0xff>>) # Bank B: Set all to inputs
-    I2C.write(pid, <<@gppu_b, 0xff>>) # Bank B: Enable pull up resistors
+    # I2C.write(pid, <<@iodir_b, 0xff>>) # Bank B: Set all to inputs
+    # I2C.write(pid, <<@gppu_b, 0xff>>) # Bank B: Enable pull up resistors
 
-    # Output
-    {:ok, gpio_17} = GPIO.start_link(17, :output)
-    GPIO.write(gpio_17, 1)
+    # # Output
+    # {:ok, gpio_17} = GPIO.start_link(17, :output)
+    # GPIO.write(gpio_17, 1)
 
-    spawn(fn -> read_inputs(pid) end)
+    # spawn(fn -> read_inputs(pid) end)
 
     {:ok, self()}
   end
 
-  def read_inputs(pid) do
-    <<values_a>> = I2C.write_read(pid, <<@gpio_a>>, 1) # Bank A: Read
-    <<values_b>> = I2C.write_read(pid, <<@gpio_b>>, 1) # Bank B: Read
+  # def read_inputs(pid) do
+  #   <<values_a>> = I2C.write_read(pid, <<@gpio_a>>, 1) # Bank A: Read
+  #   <<values_b>> = I2C.write_read(pid, <<@gpio_b>>, 1) # Bank B: Read
 
-    #Logger.debug "Bank A: #{values_a}"
-    #Logger.debug "Bank B: #{values_b}"
+  #   #Logger.debug "Bank A: #{values_a}"
+  #   #Logger.debug "Bank B: #{values_b}"
 
-    [128,64,32,16,8,4,2,1]
-    |> Enum.with_index()
-    |> Enum.map(fn {value, index} ->
-      if (values_a &&& value) == 0 do
-        Logger.debug "Button #{index+1} is pressed!"
-      end
-    end)
+  #   [128,64,32,16,8,4,2,1]
+  #   |> Enum.with_index()
+  #   |> Enum.map(fn {value, index} ->
+  #     if (values_a &&& value) == 0 do
+  #       Logger.debug "Button #{index+1} is pressed!"
+  #     end
+  #   end)
 
-    #:timer.sleep(10)
+  #   #:timer.sleep(10)
 
-    read_inputs(pid)
-  end
+  #   read_inputs(pid)
+  # end
 end

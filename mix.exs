@@ -50,16 +50,17 @@ defmodule Airsoft.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   def deps do
-    [{:nerves, "~> 0.5.0", runtime: false}] ++
+    [{:nerves, "~> 0.7.0", runtime: false}] ++
     deps(@target)
   end
 
   # Specify target specific dependencies
   def deps("host"), do: []
   def deps(target) do
-    [{:nerves_runtime, "~> 0.1.0"},
-     {:"nerves_system_#{target}", "~> 0.10", runtime: false},
-     {:elixir_ale, "~> 1.0.0"}]
+    [{:nerves_runtime, "~> 0.4.4"},
+     {:"nerves_system_#{target}", "~> 0.16.1", runtime: false},
+     {:elixir_ale, "~> 1.0.0"},
+     {:nerves_uart, "~> 0.1.2"}]
   end
 
   # We do not invoke the Nerves Env when running on the Host
