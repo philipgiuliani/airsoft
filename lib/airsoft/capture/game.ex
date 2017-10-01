@@ -13,8 +13,8 @@ defmodule Airsoft.Capture.Game do
     defstruct [
       flags: %{},
       teams: %{},
-      time_per_point: @default_time_per_point,
-      time_max_speed: @default_time_max_speed,
+      time_per_point: 5,
+      time_max_speed: 0.5,
       last_capture: nil
     ]
   end

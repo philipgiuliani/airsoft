@@ -18,7 +18,7 @@ defmodule Airsoft.Application do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(Airsoft.UART, [])
+      worker(Airsoft.UART, ["ttyAMA0", 115200])
       # worker(Airsoft.KOTHServer, [])
     ]
 

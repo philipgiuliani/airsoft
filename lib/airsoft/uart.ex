@@ -23,7 +23,7 @@ defmodule Airsoft.UART do
   end
 
   def handle_info({:nerves_uart, _port, message}, state) do
-    Logger.debug "Message received: #{message}"
+    Logger.debug "Message received: #{to_string(message)}"
     {:noreply, state}
   end
 end

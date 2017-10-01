@@ -10,8 +10,15 @@ use Mix.Config
 # archive.
 
 # config :nerves, :firmware,
-#   rootfs_additions: "config/rootfs_additions",
+#   rootfs_overlay: "rootfs_overlay",
 #   fwup_conf: "config/fwup.conf"
+
+# Use bootloader to start the main application. See the bootloader
+# docs for separating out critical OTP applications such as those
+# involved with firmware updates.
+config :bootloader,
+  init: [:nerves_runtime],
+  app: :airsoft
 
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
