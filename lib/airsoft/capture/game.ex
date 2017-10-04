@@ -1,6 +1,13 @@
 defmodule Airsoft.Capture.Game do
-  alias Airsoft.Capture.Point
+  defstruct [
+    flags: %{},
+    teams: %{},
+    time_per_point: @default_time_per_point,
+    time_max_speed: @default_time_max_speed,
+    last_capture: nil
+  ]
 
+  # Names of the teams
   @teams [:red, :blue]
 
   # Time in seconds, that the team will get a point when holing one single flag.
@@ -8,16 +15,6 @@ defmodule Airsoft.Capture.Game do
 
   # Describes the time in which the team gains points when they have 100% of the flags.
   @default_time_max_speed 0.5
-
-  defmodule State do
-    defstruct [
-      flags: %{},
-      teams: %{},
-      time_per_point: 5,
-      time_max_speed: 0.5,
-      last_capture: nil
-    ]
-  end
 
   @doc """
   Starts a new game
@@ -27,7 +24,7 @@ defmodule Airsoft.Capture.Game do
     time_per_point = Keyword.get(opts, :time_per_point, @default_time_per_point)
     time_max_speed = Keyword.get(opts, :time_max_speed, @default_time_max_speed)
 
-    %State{
+    %__MODULE__{
       time_per_point: time_per_point,
       time_max_speed: time_max_speed,
       flags: Enum.reduce(flags, %{}, fn flag, acc ->
@@ -45,7 +42,7 @@ defmodule Airsoft.Capture.Game do
   It also updates the scores of all teams and resets the capture timer.
   """
   def capture(game, flag, team) do
-    %State{game |
+    %__MODULE__{game |
       flags: Map.update!(game.flags, flag, fn flag_team ->
         case flag_team do
           :neutral -> team
@@ -63,7 +60,7 @@ defmodule Airsoft.Capture.Game do
   @doc """
   Calculates the points of a team.
   """
-  def team_score(%State{last_capture: last_capture}, _) when is_nil(last_capture), do: 0
+  def team_score(%__MODULE__{last_capture: last_capture}, _) when is_nil(last_capture), do: 0
   def team_score(game, team) do
     bonus_per_flag = (game.time_per_point - game.time_max_speed) / (map_size(game.flags) - 1)
 
