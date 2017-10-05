@@ -23,7 +23,7 @@ defmodule Airsoft.Application do
     ]
 
     opts = [strategy: :one_for_one, name: Airsoft.Supervisor]
-    Supervisor.start_link(children, opts)
+    {:ok, pid} = Supervisor.start_link(children, opts)
 
     # IC2 configuration
     # {:ok, pid} = I2C.start_link("i2c-1", 0x20)
@@ -39,7 +39,7 @@ defmodule Airsoft.Application do
 
     # spawn(fn -> read_inputs(pid) end)
 
-    {:ok, self()}
+    {:ok, pid}
   end
 
   # def read_inputs(pid) do

@@ -16,14 +16,21 @@ defmodule Airsoft.UART do
       port,
       speed: speed,
       active: true,
+      rx_framing_timeout: 1000,
       framing: {Nerves.UART.Framing.Line, separator: "\r\n"}
     )
 
     {:ok, []}
   end
 
+  def handle_info({:nerves_uart, _port, {:partial, message}}, state) do
+    Logger.debug "Partial message received: #{inspect message}"
+    {:noreply, state}
+  end
+
   def handle_info({:nerves_uart, _port, message}, state) do
-    Logger.debug "Message received: #{to_string(message)}"
+    Logger.debug "Message received: #{inspect message}"
+    Logger.debug "String: #{to_string(message)}"
     {:noreply, state}
   end
 end
