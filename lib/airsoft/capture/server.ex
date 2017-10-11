@@ -23,8 +23,4 @@ defmodule Airsoft.Capture.Server do
   def handle_call({:team_score, team}, _from, game) do
     {:reply, Game.team_score(game, team), game}
   end
-
-  def handle_info({:button_press, _from, button}, state) do
-    {:noreply, new_stat}
-  end
 end

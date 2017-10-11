@@ -8,7 +8,7 @@ defmodule Airsoft.Capture.Game do
   ]
 
   # Names of the teams
-  @teams [:red, :blue]
+  @default_teams [:red, :blue]
 
   # Time in seconds, that the team will get a point when holing one single flag.
   @default_time_per_point 5
@@ -21,6 +21,7 @@ defmodule Airsoft.Capture.Game do
   """
   def start(opts \\ []) do
     flags = Keyword.get(opts, :flags, [])
+    teams = Keyword.get(opts, :teams, @default_teams)
     time_per_point = Keyword.get(opts, :time_per_point, @default_time_per_point)
     time_max_speed = Keyword.get(opts, :time_max_speed, @default_time_max_speed)
 
@@ -30,7 +31,7 @@ defmodule Airsoft.Capture.Game do
       flags: Enum.reduce(flags, %{}, fn flag, acc ->
         Map.put(acc, flag, :neutral)
       end),
-      teams: Enum.reduce(@teams, %{}, fn team, acc ->
+      teams: Enum.reduce(teams, %{}, fn team, acc ->
         Map.put(acc, team, 0.0)
       end)
     }
