@@ -12,7 +12,6 @@ defmodule Airsoft.Capture.Server do
   # GenServer callbacks
 
   def init(opts) do
-    Communicator.subscribe(self())
     {:ok, Game.start(opts)}
   end
 
